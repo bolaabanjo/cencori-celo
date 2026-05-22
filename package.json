@@ -1,0 +1,18 @@
+{
+  "name": "my-test",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "node src/index.mjs",
+    "setup:celo": "node src/setup-celo.mjs",
+    "deploy": "node src/deploy.mjs",
+    "compile": "npx --yes solc@0.8.23 -o build --bin --abi contracts/AgentRunReceipts.sol",
+    "ship": "node src/ship.mjs",
+    "dev": "node src/server.mjs",
+    "start": "node src/server.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.39.3"
+  }
+}

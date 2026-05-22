@@ -1,0 +1,8 @@
+node_modules/
+build/
+contracts_AgentRunReceipts_sol_*
+.env
+.env.*
+!.env.example
+output/*
+!output/.gitkeep
