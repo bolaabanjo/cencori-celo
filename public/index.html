@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cencori × Celo — Agent Receipts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="/logo/black.svg"
+          width="32"
+          height="32"
+          alt="Cencori"
+        />
+        <div>
+          <p class="brand-kicker">Agent receipt starter</p>
+          <h1>Cencori × Celo</h1>
+        </div>
+      </div>
+      <p class="brand-sub">
+        Run an agent via Cencori, hash the receipt, optionally anchor it on Celo Sepolia.
+      </p>
+    </header>
+
+    <main class="layout">
+      <aside class="panel status-panel" id="status-panel">
+        <h2>System</h2>
+        <div class="status-grid" id="status-grid">
+          <p class="muted">Loading…</p>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn btn-secondary" id="btn-deploy" disabled>
+            Deploy receipt contract
+          </button>
+          <a
+            class="btn btn-ghost"
+            id="faucet-link"
+            href="https://faucet.celo.org/celo-sepolia"
+            target="_blank"
+            rel="noopener"
+            >Fund wallet</a
+          >
+        </div>
+      </aside>
+
+      <section class="panel run-panel">
+        <div class="panel-head">
+          <h2>Agent</h2>
+          <span class="tag tag-blue" id="model-tag">—</span>
+        </div>
+
+        <label class="field-label" for="task-input">Task</label>
+        <textarea
+          id="task-input"
+          rows="6"
+          placeholder="Set default task in agent.config.json or enter a task here…"
+        ></textarea>
+
+        <div class="run-actions">
+          <button type="button" class="btn btn-primary" id="btn-run">
+            Run agent
+          </button>
+          <span class="run-hint muted" id="run-hint"></span>
+        </div>
+
+        <div class="output-wrap hidden" id="output-wrap">
+          <div class="output-meta" id="output-meta"></div>
+          <article class="output-body" id="output-body"></article>
+        </div>
+      </section>
+
+      <aside class="panel history-panel">
+        <h2>Recent runs</h2>
+        <ul class="run-list" id="run-list">
+          <li class="muted">No runs yet</li>
+        </ul>
+      </aside>
+    </main>
+
+    <footer class="site-footer muted">
+      Configure defaults in <code>agent.config.json</code>. Payment fields in receipts are
+      metadata only; onchain action is <code>recordRun(receiptHash)</code>.
+    </footer>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
