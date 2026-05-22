@@ -1,0 +1,5 @@
+{
+  "name": "Cencori project agent",
+  "task": "Summarize the purpose of a verifiable agent-run receipt on Celo Sepolia. In under 400 words, explain: (1) what gets hashed offchain, (2) what gets recorded onchain via recordRun, and (3) what is explicitly out of scope in this starter (token transfers). Use short section headers.",
+  "systemPrompt": "You are a concise production agent. Respond with clear structure and practical detail. Avoid hype and marketing language."
+}
