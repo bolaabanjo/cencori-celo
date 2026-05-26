@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadEnv, readEnv } from "../src/env.mjs";
 import { getAppStatus } from "../src/status.mjs";
 import { loadAgentConfig } from "../src/agent-config.mjs";
@@ -9,17 +6,6 @@ import { deployAgentRunReceipts } from "../src/deploy.mjs";
 import { writeEnv } from "../src/env.mjs";
 
 loadEnv();
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const publicDir = path.resolve(__dirname, "../public");
-
-const MIME = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".svg": "image/svg+xml",
-  ".ico": "image/x-icon",
-};
 
 function json(res, status, body) {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -38,30 +24,11 @@ async function readBody(req) {
   }
 }
 
-function serveStatic(req, res) {
-  let urlPath = req.url?.split("?")[0] || "/";
-  if (urlPath === "/") urlPath = "/index.html";
-  const filePath = path.join(publicDir, path.normalize(urlPath).replace(/^(\.\.(\/|\\|$))+/, ""));
-  if (!filePath.startsWith(publicDir)) {
-    res.writeHead(403);
-    res.end("Forbidden");
-    return;
-  }
-  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-    res.writeHead(404);
-    res.end("Not found");
-    return;
-  }
-  const ext = path.extname(filePath);
-  res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream" });
-  fs.createReadStream(filePath).pipe(res);
-}
-
 export default async function handler(req, res) {
-  const url = new URL(req.url || "/", "http://localhost");
-  const { pathname } = url;
-
   try {
+    const url = new URL(req.url || "/", "http://localhost");
+    const { pathname } = url;
+
     if (pathname === "/api/status" && req.method === "GET") {
       return json(res, 200, await getAppStatus());
     }
@@ -101,14 +68,9 @@ export default async function handler(req, res) {
       return json(res, 200, deployed);
     }
 
-    if (pathname.startsWith("/api/")) {
-      return json(res, 404, { error: "Unknown API route" });
-    }
-
-    return serveStatic(req, res);
+    return json(res, 404, { error: "Unknown route" });
   } catch (err) {
-    const msg = err.message || "Server error";
-    console.error(`[${pathname}] ${msg}`);
-    return json(res, 500, { error: msg });
+    console.error("Handler error:", err);
+    return json(res, 500, { error: err.message || "Internal error" });
   }
 }
