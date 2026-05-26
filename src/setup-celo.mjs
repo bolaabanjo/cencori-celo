@@ -26,7 +26,7 @@ export async function ensureCeloWallet() {
   const { generatePrivateKey, privateKeyToAccount } = await import("viem/accounts");
   const privateKey = generatePrivateKey();
   const account = privateKeyToAccount(privateKey);
-  writeEnv({ CELO_PRIVATE_KEY: privateKey });
+  try { writeEnv({ CELO_PRIVATE_KEY: privateKey }); } catch {}
 
   return { address: account.address, balance: 0n, created: true };
 }

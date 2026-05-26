@@ -63,7 +63,7 @@ export async function runAgent({ task } = {}) {
 
   const receiptHash = hashReceipt(receipt);
 
-  fs.mkdirSync(outputDir, { recursive: true });
+  try { fs.mkdirSync(outputDir, { recursive: true }); } catch {}
   const receiptPath = path.join(outputDir, `${externalRunId}.json`);
 
   const onchain = await recordReceiptOnCelo({
@@ -81,7 +81,7 @@ export async function runAgent({ task } = {}) {
     onchain_recorded: !onchain.simulated,
     onchain_tx_hash: onchain.txHash || null,
   };
-  fs.writeFileSync(receiptPath, `${stableJson(fullReceipt)}\n`);
+  try { fs.writeFileSync(receiptPath, `${stableJson(fullReceipt)}\n`); } catch {}
 
   const explorerBase = readEnv("CELO_EXPLORER_URL", "https://celo-sepolia.blockscout.com");
   const explorerUrl = onchain.txHash

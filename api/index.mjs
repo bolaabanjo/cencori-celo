@@ -63,7 +63,7 @@ export default async function handler(req, res) {
         contractAddress: readEnv("CELO_RECEIPTS_CONTRACT"),
       });
       if (!deployed.skipped) {
-        writeEnv({ CELO_RECEIPTS_CONTRACT: deployed.address });
+        try { writeEnv({ CELO_RECEIPTS_CONTRACT: deployed.address }); } catch {}
       }
       return json(res, 200, deployed);
     }
