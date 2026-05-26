@@ -108,5 +108,29 @@ export async function runAgent({ task } = {}) {
   };
 }
 
+export function listRuns() {
+  const dir = outputDir;
+  if (!fs.existsSync(dir)) return [];
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json")).sort().reverse().slice(0, 20);
+  return files.map((f) => {
+    const id = f.replace(/\.json$/, "");
+    const preview = (() => {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+        return { id, taskPreview: data.run?.task?.slice(0, 80) || "Agent run" };
+      } catch { return { id, taskPreview: "Agent run" }; }
+    })();
+    return preview;
+  });
+}
+
+export function getRun(id) {
+  const filePath = path.join(outputDir, `${id}.json`);
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch { return null; }
+}
+
 /** @deprecated Use runAgent */
 export const runResearchAgent = runAgent;
