@@ -4,7 +4,7 @@
   "systemPrompt": "You are a helpful, concise AI assistant. Provide clear, practical answers. Avoid hype and marketing language.",
   "pricing": {
     "free": { "model": "llama-3.3-70b-versatile", "label": "Standard" },
-    "pro": { "model": "claude-sonnet-4-20250514", "label": "Pro" }
+    "pro": { "model": "llama-3.3-70b-versatile", "label": "Pro" }
   },
   "subscription": {
     "monthlyPriceUsd": 5,
