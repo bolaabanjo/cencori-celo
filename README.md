@@ -1,32 +1,6 @@
-# Cencori × Celo Agent Receipt Starter
+# Cencori Agent — General Purpose AI with Celo Subscription Payments
 
-Forkable starter: **Cencori** for agent infrastructure, **Celo** for onchain proof of agent runs.
-
-```text
-Cencori Agent Run → Structured Receipt → SHA-256 Hash → recordRun() on Celo Sepolia (optional)
-```
-
-## Configure the agent
-
-Edit **`agent.config.json`** (committed default):
-
-```json
-{
-  "name": "Cencori project agent",
-  "task": "Your default prompt…",
-  "systemPrompt": "System instructions for the gateway call…"
-}
-```
-
-Optional env overrides: `AGENT_TASK`, `AGENT_NAME`, `AGENT_SYSTEM_PROMPT`, `AGENT_CONFIG_PATH`.
-
-Copy **`.env.example`** → **`.env`** and add your keys (never commit `.env`).
-
-## Payments vs onchain proof
-
-- **Onchain in this repo:** `recordRun(receiptHash, …)` on `AgentRunReceipts` (proof event).
-- **Not in this repo:** USDC/USDT transfers, x402 charges, or MiniPay sends.
-- `DEMO_PAYMENT_*` values are receipt metadata only.
+AI agent powered by **Cencori** gateway, with optional **Celo** blockchain subscription payments via MetaMask.
 
 ## Quickstart
 
@@ -34,46 +8,38 @@ Copy **`.env.example`** → **`.env`** and add your keys (never commit `.env`).
 npm install
 cp .env.example .env   # add CENCORI_API_KEY
 npm run dev            # http://localhost:3333
-npm run demo           # CLI single run
-npm run setup:celo     # wallet + faucet link
-npm run deploy         # after funding wallet
-npm run ship           # deploy (if funded) + run
 ```
 
-### Cencori API base URL
+## How it works
 
-Use the gateway on the main domain:
+- **Free tier** — uses the standard model (llama-3.3-70b), no wallet needed
+- **Pro tier** — $5/month via Celo cUSD, uses the premium model
+- Connect MetaMask, pay the subscription to the `SubscriptionManager` contract, and get Pro access for 30 days
+- All agent runs are recorded as structured receipts (internal audit log)
+
+## Configuration
+
+Edit `agent.config.json`:
+- `task` / `systemPrompt` — default agent behaviour
+- `pricing.free.model` — model for free tier
+- `pricing.pro.model` — model for pro tier
+- `subscription.monthlyPriceUsd` — subscription price
+- `subscription.paymentToken` — token address for payment
+
+## Celo subscription
 
 ```bash
-CENCORI_BASE_URL=https://cencori.com/api/v1
+npm run compile           # solc → build/
+npm run deploy:sub        # deploy SubscriptionManager to Celo Sepolia
 ```
 
-Do **not** use `https://api.cencori.com/v1` — that host may be unreachable.
+Requires `CELO_PRIVATE_KEY` and funded wallet (faucet: https://faucet.celo.org/celo-sepolia).
 
-## What you get
+## Commands
 
-- Cencori gateway (chat completions + trace id)
-- Structured receipt JSON + deterministic hash
-- Optional Celo Sepolia `recordRun` tx
-- CLI + local web UI (secrets stay server-side)
-- Simulation mode when keys are missing
-
-## Celo Sepolia
-
-```text
-Chain ID: 11142220
-RPC: https://forno.celo-sepolia.celo-testnet.org
-Explorer: https://celo-sepolia.blockscout.com
-```
-
-## Internal doc (for Celo team)
-
-**[docs/CELO_TEAM_INTEGRATION.md](docs/CELO_TEAM_INTEGRATION.md)** — architecture, schema, API, scope, demo script.
-
-## Extension ideas
-
-- Real stablecoin settlement on Celo
-- Public `receiptURI` (HTTPS / IPFS)
-- ERC-8004 agent reputation
-- x402 paid tools
-- MiniPay-facing flows
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Web UI at localhost:3333 |
+| `npm run demo` | CLI single agent run |
+| `npm run compile` | Compile SubscriptionManager.sol |
+| `npm run deploy:sub` | Deploy subscription contract |

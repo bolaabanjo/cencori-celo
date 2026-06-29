@@ -12,7 +12,7 @@ export async function runCencoriAgent({
       simulated: true,
       requestId: `sim_${Date.now()}`,
       content:
-        "Simulated Cencori response: Celo gives agents stablecoin payments, identity, reputation, and low-cost settlement. Cencori gives those agents routing, traces, approvals, budgets, and security.",
+        "Simulated Cencori response: This is a demo response. In production, the agent would connect to the Cencori gateway and return a real AI-generated answer to your query.",
       usage: {
         prompt_tokens: 0,
         completion_tokens: 0,

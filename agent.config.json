@@ -1,5 +1,14 @@
 {
-  "name": "Cencori project agent",
-  "task": "Summarize the purpose of a verifiable agent-run receipt on Celo Sepolia. In under 400 words, explain: (1) what gets hashed offchain, (2) what gets recorded onchain via recordRun, and (3) what is explicitly out of scope in this starter (token transfers). Use short section headers.",
-  "systemPrompt": "You are a concise production agent. Respond with clear structure and practical detail. Avoid hype and marketing language."
+  "name": "General purpose AI agent",
+  "task": "You are a helpful assistant. Respond to the user's request clearly and concisely.",
+  "systemPrompt": "You are a helpful, concise AI assistant. Provide clear, practical answers. Avoid hype and marketing language.",
+  "pricing": {
+    "free": { "model": "llama-3.3-70b-versatile", "label": "Standard" },
+    "pro": { "model": "claude-sonnet-4-20250514", "label": "Pro" }
+  },
+  "subscription": {
+    "monthlyPriceUsd": 5,
+    "paymentToken": "cUSD",
+    "contractAddress": ""
+  }
 }

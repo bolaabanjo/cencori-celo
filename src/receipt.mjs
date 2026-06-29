@@ -33,14 +33,12 @@ export function createReceipt({
   outputPreview,
   usage,
   controls,
-  celo,
 }) {
   return {
-    type: "cencori.agent_run_receipt",
-    version: "0.1",
-    network: "celo-sepolia",
+    type: "agent_run_receipt",
+    version: "0.2",
     agent: {
-      cencori_agent_id: agentId,
+      agent_id: agentId,
       name: agentName,
       model,
     },
@@ -54,6 +52,5 @@ export function createReceipt({
     },
     usage,
     controls,
-    celo,
   };
 }

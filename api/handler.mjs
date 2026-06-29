@@ -2,10 +2,41 @@ import { loadEnv, readEnv } from "../src/env.mjs";
 import { getAppStatus } from "../src/status.mjs";
 import { loadAgentConfig } from "../src/agent-config.mjs";
 import { getRun, listRuns, runAgent } from "../src/run-agent.mjs";
-import { deployAgentRunReceipts } from "../src/deploy.mjs";
-import { writeEnv } from "../src/env.mjs";
 
 loadEnv();
+
+function sanitize(input) {
+  if (typeof input !== "string") return input;
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/javascript\s*:/gi, "")
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "")
+    .replace(/on\w+\s*=\s*[^\s>]+/gi, "")
+    .trim();
+}
+
+let subscriptionCache = {};
+
+function getCachedSubscriptions() {
+  const config = loadAgentConfig();
+  const address = config.subscription?.contractAddress;
+  if (!address) return {};
+  return subscriptionCache;
+}
+
+function isSubscribed(walletAddress) {
+  if (!walletAddress) return false;
+  const subs = getCachedSubscriptions();
+  const record = subs[walletAddress.toLowerCase()];
+  if (!record) return false;
+  return record.expiry > Date.now();
+}
+
+function setSubscribed(walletAddress) {
+  const key = walletAddress.toLowerCase();
+  subscriptionCache[key] = { expiry: Date.now() + 30 * 24 * 60 * 60 * 1000 };
+}
 
 function sendNodeJson(res, status, body) {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -89,22 +120,27 @@ async function routeApiRequest({ method, rawUrl, readBody }) {
 
   if (pathname === "/api/run" && method === "POST") {
     const body = await readBody();
-    const config = loadAgentConfig();
-    const task = (body.task || "").trim() || config.task;
-    const result = await runAgent({ task });
+    const task = sanitize((body.task || "").trim()) || loadAgentConfig().task;
+    const wallet = sanitize(body.wallet || "");
+    const tier = isSubscribed(wallet) ? "pro" : "free";
+    const result = await runAgent({ task, tier });
     return { status: 200, body: result };
   }
 
-  if (pathname === "/api/deploy" && method === "POST") {
-    const deployed = await deployAgentRunReceipts({
-      rpcUrl: readEnv("CELO_RPC_URL", "https://forno.celo-sepolia.celo-testnet.org"),
-      privateKey: readEnv("CELO_PRIVATE_KEY"),
-      contractAddress: readEnv("CELO_RECEIPTS_CONTRACT"),
-    });
-    if (!deployed.skipped) {
-      try { writeEnv({ CELO_RECEIPTS_CONTRACT: deployed.address }); } catch {}
+  if (pathname === "/api/subscribe" && method === "POST") {
+    const body = await readBody();
+    const wallet = sanitize(body.wallet || "");
+    if (!wallet) {
+      return { status: 400, body: { error: "Wallet address is required" } };
     }
-    return { status: 200, body: deployed };
+    setSubscribed(wallet);
+    return { status: 200, body: { subscribed: true, wallet, tier: "pro" } };
+  }
+
+  if (pathname === "/api/subscription/status" && method === "GET") {
+    const wallet = sanitize(url.searchParams.get("wallet") || "");
+    const active = isSubscribed(wallet);
+    return { status: 200, body: { subscribed: active, tier: active ? "pro" : "free" } };
   }
 
   return { status: 404, body: { error: "Unknown route" } };

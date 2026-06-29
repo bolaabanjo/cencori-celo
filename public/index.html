@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cencori × Celo — Agent Receipts</title>
+    <title>Cencori Agent</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https:; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,60 +18,53 @@
 
     <header class="site-header">
       <div class="brand">
-        <img
-          class="brand-logo"
-          src="/logo/black.svg"
-          width="32"
-          height="32"
-          alt="Cencori"
-        />
+        <img class="brand-logo" src="/logo/black.svg" width="32" height="32" alt="Cencori" />
         <div>
-          <p class="brand-kicker">Agent receipt starter</p>
-          <h1>Cencori × Celo</h1>
+          <p class="brand-kicker">AI Agent</p>
+          <h1>Cencori</h1>
         </div>
       </div>
       <p class="brand-sub">
-        Run an agent via Cencori, hash the receipt, optionally anchor it on Celo Sepolia.
+        Run AI agents, review responses, and manage your subscription.
       </p>
     </header>
 
     <main class="layout">
       <aside class="panel status-panel" id="status-panel">
-        <h2>System</h2>
+        <h2>Account</h2>
         <div class="status-grid" id="status-grid">
           <p class="muted">Loading…</p>
         </div>
-        <div class="panel-actions">
-          <button type="button" class="btn btn-secondary" id="btn-deploy" disabled>
-            Deploy receipt contract
+        <div class="panel-actions" id="account-actions">
+          <button type="button" class="btn btn-primary" id="btn-connect">
+            Connect Wallet
           </button>
-          <a
-            class="btn btn-ghost"
-            id="faucet-link"
-            href="https://faucet.celo.org/celo-sepolia"
-            target="_blank"
-            rel="noopener"
-            >Fund wallet</a
-          >
+          <button type="button" class="btn btn-secondary hidden" id="btn-subscribe">
+            Subscribe Pro — $5/mo
+          </button>
+          <span class="tag tag-green hidden" id="pro-badge">Pro</span>
         </div>
       </aside>
 
       <section class="panel run-panel">
         <div class="panel-head">
           <h2>Agent</h2>
-          <span class="tag tag-blue" id="model-tag">—</span>
+          <div class="panel-head-right">
+            <span class="tag tag-blue" id="model-tag">—</span>
+            <span class="tag tag-yellow" id="tier-tag">Free</span>
+          </div>
         </div>
 
-        <label class="field-label" for="task-input">Task</label>
+        <label class="field-label" for="task-input">What would you like to do?</label>
         <textarea
           id="task-input"
           rows="6"
-          placeholder="Set default task in agent.config.json or enter a task here…"
+          placeholder="Ask something…"
         ></textarea>
 
         <div class="run-actions">
           <button type="button" class="btn btn-primary" id="btn-run">
-            Run agent
+            Run
           </button>
           <span class="run-hint muted" id="run-hint"></span>
         </div>
@@ -90,8 +84,7 @@
     </main>
 
     <footer class="site-footer muted">
-      Configure defaults in <code>agent.config.json</code>. Payment fields in receipts are
-      metadata only; onchain action is <code>recordRun(receiptHash)</code>.
+      <p>Free tier uses standard model. <button type="button" class="btn-inline" id="footer-subscribe">Subscribe Pro</button> for the premium model ($5/mo).</p>
     </footer>
 
     <script src="/app.js" type="module"></script>
